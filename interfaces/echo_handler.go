@@ -3,68 +3,65 @@ package interfaces
 import (
 	"echoApi/app"
 	"echoApi/domain/entity"
-	"echoApi/dto"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
 
 type Echo struct {
-	log *log.Logger
-	app app.EchoAppInterface
+	logger *log.Logger
+	app    app.EchoAppInterface
 }
 
-func NewEcho(log *log.Logger, appInterface app.EchoAppInterface) *Echo {
-	return &Echo{log, appInterface}
+func NewEcho(logger *log.Logger, appInterface app.EchoAppInterface) *Echo {
+	return &Echo{logger, appInterface}
 }
 
 func (echo *Echo) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodPost {
-		user := createUser(res, req)
-		data, err := echo.CreateUser(user)
+		item := createItem(res, req)
+		data, err := echo.CreateItem(item)
 		if err != nil {
-			echo.log.Println(err)
+			echo.logger.Println(err)
 			http.Error(res, "an error occurred", http.StatusBadRequest)
 		}
-		data.ToJson(res)
-	}
-	if req.Method == http.MethodGet {
-		echo.getUsers(res, req)
+		data.ToJSON(res)
 		return
 	}
-	res.WriteHeader(http.StatusMethodNotAllowed)
+
+	if req.Method == http.MethodGet {
+		echo.GetItems(res, req)
+		return
+	}
+
 }
 
-func (echo *Echo) CreateUser(user *entity.User) (*entity.User, map[string]string) {
-	return echo.app.SaveUser(user)
+func (echo *Echo) CreateItem(item *entity.Item) (*entity.Item, error) {
+	return echo.app.SaveEchos(item)
 }
 
-func (echo *Echo) GetUsers() (*entity.Users, error) {
-	return echo.app.GetUsers()
-}
-
-func (echo *Echo) getUsers(res http.ResponseWriter, req *http.Request) {
-	users, err := echo.app.GetUsers()
+func (echo *Echo) GetItems(res http.ResponseWriter, req *http.Request) {
+	items, err := echo.app.GetEchos()
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+	}
+	err = items.ToJSON(res)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusInternalServerError)
 	}
-
-	err = users.ToJson(res)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusInternalServerError)
-	}
-
 }
 
-func createUser(res http.ResponseWriter, req *http.Request) *entity.User {
-	userDto := dto.User{}
-	err := userDto.FromJSON(req.Body)
+func createItem(res http.ResponseWriter, req *http.Request) *entity.Item {
+	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
-		http.Error(res, "invalid entity", http.StatusBadRequest)
+		http.Error(res, "an error occurred", http.StatusBadRequest)
 	}
-	user := entity.User{
-		Username: userDto.Username,
-		Name:     userDto.Name,
+	var result map[string]interface{}
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		http.Error(res, "an error occurred", http.StatusBadRequest)
 	}
-	return &user
-
+	item := entity.Item{Echos: result}
+	return &item
 }

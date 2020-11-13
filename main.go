@@ -39,7 +39,9 @@ func main() {
 	defer service.Close()
 	service.AutoMigrate()
 
-	echoHandler := interfaces.NewEcho(logger, service.User)
+	userHandler := interfaces.NewUser(logger, service.User)
+	echoHandler := interfaces.NewEcho(logger, service.Echo)
+	serveMux.Handle("/user", userHandler)
 	serveMux.Handle("/echo", echoHandler)
 
 	server := http.Server{

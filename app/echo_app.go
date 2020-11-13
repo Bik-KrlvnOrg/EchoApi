@@ -6,25 +6,20 @@ import (
 )
 
 type EchoAppInterface interface {
-	SaveUser(*entity.User) (*entity.User, map[string]string)
-	GetUsers() (*entity.Users, error)
-	GetUser(uint) (*entity.User, error)
+	SaveEchos(*entity.Item) (*entity.Item, error)
+	GetEchos() (*entity.Items, error)
 }
 
 type echoApp struct {
-	repository repository.UserRepository
+	repository repository.EchoRepository
 }
 
 var _ EchoAppInterface = &echoApp{}
 
-func (e *echoApp) SaveUser(user *entity.User) (*entity.User, map[string]string) {
-	return e.repository.SaveUser(user)
+func (e echoApp) SaveEchos(item *entity.Item) (*entity.Item, error) {
+	return e.repository.SaveEchos(item)
 }
 
-func (e *echoApp) GetUsers() (*entity.Users, error) {
-	return e.repository.GetUsers()
-}
-
-func (e *echoApp) GetUser(id uint) (*entity.User, error) {
-	return e.repository.GetUser(id)
+func (e echoApp) GetEchos() (*entity.Items, error) {
+	return e.repository.GetEchos()
 }

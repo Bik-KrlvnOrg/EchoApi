@@ -10,6 +10,7 @@ import (
 
 type Repositories struct {
 	User repository.UserRepository
+	Echo repository.EchoRepository
 	db   *gorm.DB
 }
 
@@ -22,6 +23,7 @@ func NewRepositories(dbDriver, dbUser, dbPassword, dbPort, dbHost, dbName string
 	db.LogMode(true)
 	return &Repositories{
 		User: NewUserRepository(db),
+		Echo: NewEchoRepository(db),
 		db:   db,
 	}, nil
 }
@@ -31,5 +33,5 @@ func (repositories *Repositories) Close() error {
 }
 
 func (repositories *Repositories) AutoMigrate() error {
-	return repositories.db.AutoMigrate(&entity.User{}).Error
+	return repositories.db.AutoMigrate(&entity.User{}, &entity.Item{}).Error
 }

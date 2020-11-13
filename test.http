@@ -2,8 +2,8 @@ POST http://localhost:5750/echo
 Content-Type: application/json
 
 {
-  "name": "James Bonsu",
-  "username": "james"
+  "animal": "cat",
+  "special": "monk"
 }
 
 ###
