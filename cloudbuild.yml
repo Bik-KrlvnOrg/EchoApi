@@ -1,0 +1,7 @@
+steps:
+  - name: "echo api"
+    args: ["go","build","."]
+  artifacts:
+    objects:
+      location: ['STORAGE_LOCATION']
+      path: ['ARTIFACT_PATH']

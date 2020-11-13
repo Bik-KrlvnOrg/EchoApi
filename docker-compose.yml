@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  echo_api:
+    container_name: "echo_api"
+    image: "echo_api:latest"
+    build:
+      context: .
+    depends_on:
+      - "echo_db"
+    ports:
+      - "5750:5750"
+    networks:
+      - "echo_api"
+    environment:
+      DB_DRIVER: "postgres"
+      DB_HOST: "echo_db"
+      DB_PORT: 5432
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      DB_NAME: "echo"
+      PORT: 5750
+      APP_URL: "echo_api:5750"
+
+  echo_db:
+    image: postgres:9.6-alpine
+    networks:
+      - "echo_api"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "echo"
+
+networks:
+  echo_api:

@@ -20,7 +20,7 @@ func main() {
 	serveMux := http.NewServeMux()
 	logger := log.New(os.Stdout, "echo-api:", log.LstdFlags)
 
-	port := os.Getenv("PORT")
+	appUrl := os.Getenv("APP_URL")
 	postgresConfig := config.NewPostgresConfig()
 	dbConfig := postgresConfig.GetConfig()
 	logger.Printf("%#v", dbConfig)
@@ -43,7 +43,7 @@ func main() {
 	serveMux.Handle("/echo", echoHandler)
 
 	server := http.Server{
-		Addr:    ":" + port,
+		Addr:    appUrl,
 		Handler: serveMux,
 	}
 	server.ListenAndServe()
