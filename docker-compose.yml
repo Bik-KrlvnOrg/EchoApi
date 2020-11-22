@@ -12,9 +12,10 @@ services:
       - "5750:5750"
     networks:
       - "echo_api"
+    restart: on-failure
     environment:
       DB_DRIVER: "postgres"
-      DB_HOST: "echo_db"
+      DB_HOST: echo_db
       DB_PORT: 5432
       DB_USER: "postgres"
       DB_PASSWORD: "postgres"
@@ -26,8 +27,9 @@ services:
     image: postgres:9.6-alpine
     networks:
       - "echo_api"
-    ports:
-      - "5432:5432"
+    expose:
+      - 5432
+    restart: on-failure
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"

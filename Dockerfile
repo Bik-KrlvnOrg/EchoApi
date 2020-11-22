@@ -1,4 +1,6 @@
-FROM golang:1.13.5-alpine AS build
+FROM golang:1.13.5-alpine
+
+ADD . /src
 
 WORKDIR /src
 
@@ -10,4 +12,4 @@ RUN go mod verify
 
 EXPOSE 5750
 
-RUN go run main.go
+CMD ["go","run","main.go"]

@@ -1,2 +1,7 @@
 vendor
 .env
+cloudbuild.yml
+.gitignore
+.test.http
+Dockerfile
+docker-compose.yml
